@@ -19,6 +19,7 @@ import { makeBodyWithMeta } from './components/BodyWithMeta'
 let cachedBasePath
 let cachedHrefReplace
 let cachedSrcReplace
+let cachedLinkHrefReplace
 
 export default (async function exportRoute({
   config,
@@ -65,6 +66,11 @@ export default (async function exportRoute({
       `(src=["'])\\/(${basePath ? `${basePath}\\/` : ''})?([^\\/])`,
       'gm'
     ))
+
+  // mbrowne added
+  const linkHrefReplace =
+    cachedLinkHrefReplace ||
+    (cachedLinkHrefReplace = new RegExp('(<link\\s[^>]*href=["\'])\\/', 'gm'))
 
   // This routeInfo will be saved to disk. It should only include the
   // data and hashes to construct all of the props later.
@@ -247,6 +253,10 @@ export default (async function exportRoute({
   const publicPath = makePathAbsolute(process.env.REACT_STATIC_PUBLIC_PATH)
   if (process.env.REACT_STATIC_DISABLE_ROUTE_PREFIXING !== 'true') {
     html = html.replace(hrefReplace, `$1${publicPath}$3`)
+  }
+  // mbrowne added
+  else if (process.env.REACT_STATIC_BASE_PATH) {
+    html = html.replace(linkHrefReplace, `$1${publicPath}`)
   }
 
   html = html.replace(srcReplace, `$1${publicPath}$3`)
