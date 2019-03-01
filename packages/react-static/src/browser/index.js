@@ -153,17 +153,37 @@ export async function getRouteInfo(path, { priority } = {}) {
     } else {
       // In production, fetch the JSON file
       // Find the location of the routeInfo.json file
-      const routeInfoRoot =
-        (process.env.REACT_STATIC_DISABLE_ROUTE_PREFIXING === 'true'
-          ? process.env.REACT_STATIC_SITE_ROOT
-          : process.env.REACT_STATIC_PUBLIC_PATH) || '/'
+
+      // mbrowne modified
+      let routeInfoRoot
+      if (process.env.REACT_STATIC_DISABLE_ROUTE_PREFIXING) {
+        routeInfoRoot =
+          (process.env.REACT_STATIC_BASE_PATH
+            ? process.env.REACT_STATIC_PUBLIC_PATH
+            : process.env.REACT_STATIC_SITE_ROOT) || '/'
+      } else {
+        routeInfoRoot = process.env.REACT_STATIC_PUBLIC_PATH || '/'
+      }
+      // const routeInfoRoot =
+      //   (process.env.REACT_STATIC_DISABLE_ROUTE_PREFIXING === 'true'
+      //     ? process.env.REACT_STATIC_SITE_ROOT
+      //     : process.env.REACT_STATIC_PUBLIC_PATH) || '/'
       const cacheBuster = process.env.REACT_STATIC_CACHE_BUST
         ? `?${process.env.REACT_STATIC_CACHE_BUST}`
         : ''
-      const getPath = `${routeInfoRoot}${pathJoin(
+
+      // mbrowne modified
+      let getPath = `${routeInfoRoot}${pathJoin(
         path,
         'routeInfo.json'
       )}${cacheBuster}`
+      if (process.env.REACT_STATIC_BASE_PATH) {
+        getPath = `/${getPath}`
+      }
+      // const getPath = `${routeInfoRoot}${pathJoin(
+      //   path,
+      //   'routeInfo.json'
+      // )}${cacheBuster}`
 
       // If this is a priority call bypass the queue
       if (priority) {

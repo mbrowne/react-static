@@ -77,7 +77,12 @@ function common(config) {
       filename: '[name].[hash:8].js', // dont use chunkhash, its not a chunk
       chunkFilename: 'templates/[name].[chunkHash:8].js',
       path: ASSETS,
-      publicPath: process.env.REACT_STATIC_ASSETS_PATH || '/',
+      // mbrowne modified
+      publicPath:
+        (process.env.REACT_STATIC_BASE_PATH
+          ? `/${process.env.REACT_STATIC_BASE_PATH}/`
+          : process.env.REACT_STATIC_ASSETS_PATH) || '/',
+      // publicPath: process.env.REACT_STATIC_ASSETS_PATH || '/',
     },
     optimization: {
       sideEffects: true,

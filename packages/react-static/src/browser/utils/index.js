@@ -214,7 +214,11 @@ export function isPrefetchableRoute(path) {
   let link
 
   try {
-    const baseURL = `${self.protocol}//${self.hostname + self.pathname}`
+    // mbrowne modified
+    const baseURL = `${self.protocol}//${self.hostname}${
+      self.port ? `:${self.port}` : ''
+    }${self.pathname}`
+    // const baseURL = `${self.protocol}//${self.hostname + self.pathname}`
     link = new URL(path, baseURL)
   } catch (e) {
     // Return false on invalid URLs
